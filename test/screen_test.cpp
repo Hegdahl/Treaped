@@ -1,32 +1,33 @@
 #include "../src/screen.cpp"
 
 int main() {
+  Screen screen;
 
-  auto [h, w] = Screen::size();
+  auto [h, w] = screen.size();
 
-  Screen::set_cursor(0, 0);
-  std::cout << 'a';
+  screen.set_cursor(0, 0);
+  std::cout << 'a' << std::flush;
   usleep(5e5);
-  Screen::set_cursor(1, 1);
-  std::cout << 'b';
+  screen.set_cursor(1, 1);
+  std::cout << 'b' << std::flush;
   usleep(5e5);
-  Screen::set_cursor(h-1, 0);
-  std::cout << 'c';
+  screen.set_cursor(h-1, 0);
+  std::cout << 'c' << std::flush;
   usleep(5e5);
-  Screen::set_cursor(h-2, 1);
-  std::cout << 'd';
+  screen.set_cursor(h-2, 1);
+  std::cout << 'd' << std::flush;
   usleep(5e5);
-  Screen::set_cursor(h-1, w-1);
-  std::cout << 'e';
+  screen.set_cursor(h-1, w-1);
+  std::cout << 'e' << std::flush;
   usleep(5e5);
-  Screen::set_cursor(h-2, w-2);
-  std::cout << 'f';
+  screen.set_cursor(h-2, w-2);
+  std::cout << 'f' << std::flush;
   usleep(5e5);
-  Screen::set_cursor(0, w-1);
-  std::cout << 'g';
+  screen.set_cursor(0, w-1);
+  std::cout << 'g' << std::flush;
   usleep(5e5);
-  Screen::set_cursor(1, w-2);
-  std::cout << 'h';
+  screen.set_cursor(1, w-2);
+  std::cout << 'h' << std::flush;
   usleep(5e5);
 
 }

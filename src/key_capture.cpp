@@ -1,12 +1,13 @@
 #pragma once
 #include <termios.h>
 
+#include "singleton.cpp"
 #include "unicode.cpp"
 
-class KeyCapture {
+class KeyCapture : Singleton<KeyCapture> {
  public:
 
-  static UniCodePoint next() {
+  UniCodePoint next() {
     UniCodePoint res;
     while (!res.valid()) {
       int c = getchar();
@@ -21,13 +22,6 @@ class KeyCapture {
     }
     return res;
   }
-
- private:
-  static KeyCapture * const lifetime;
-
-  auto operator=(KeyCapture) = delete;
-  auto operator=(KeyCapture&) = delete;
-  auto operator=(KeyCapture&&) = delete;
 
   KeyCapture() {
     tcgetattr(0, &old_termios);
@@ -45,6 +39,12 @@ class KeyCapture {
     tcsetattr(0, TCSANOW, &old_termios);
   }
 
+ private:
+  static KeyCapture * const lifetime;
+
+  auto operator=(KeyCapture) = delete;
+  auto operator=(KeyCapture&) = delete;
+  auto operator=(KeyCapture&&) = delete;
+
   struct termios old_termios, current_termios;
 };
-KeyCapture * const KeyCapture::lifetime = new KeyCapture();
