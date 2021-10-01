@@ -14,6 +14,10 @@ class Singleton {
           std::string("\" alive at the same time."));
   }
 
+  ~Singleton() {
+    alive() = false;
+  }
+
  private:
   static std::atomic<bool> &alive() {
     static std::atomic<bool> value = false;
