@@ -1,29 +1,14 @@
 #pragma once
+#include <cassert>
 #include <termios.h>
 
 #include "singleton.cpp"
 #include "unicode.cpp"
 
 class KeyCapture : Singleton<KeyCapture> {
+
  public:
-
-  UniCodePoint next() {
-    UniCodePoint res;
-    while (!res.valid()) {
-      int c = getchar();
-
-      if (c == -1) {
-        assert(res.empty());
-        res = UniCodePoint::eof();
-        break;
-      }
-
-      assert(res.feed((char)c));
-    }
-    return res;
-  }
-
-  KeyCapture() {
+  KeyCapture() : pending_scroll(0) {
     tcgetattr(0, &old_termios);
     current_termios = old_termios;
 
@@ -39,12 +24,57 @@ class KeyCapture : Singleton<KeyCapture> {
     tcsetattr(0, TCSANOW, &old_termios);
   }
 
+  UniCodePoint next_raw() {
+    UniCodePoint res;
+    while (!res.valid()) {
+      int c = getchar();
+
+      if (c == -1) {
+        assert(res.empty());
+        res = UniCodePoint::eof();
+        break;
+      }
+
+      bool ok = res.feed((char)c);
+      assert(ok);
+    }
+
+    return res;
+  }
+
+  UniCodePoint next() {
+    UniCodePoint res = next_raw();
+    if (res == UniCodePoint('\033')) {
+      read_escaped();
+      return UniCodePoint();
+    }
+    return res;
+  }
+
+  int get_scroll() {
+    return std::exchange(pending_scroll, 0);
+  }
+
  private:
-  static KeyCapture * const lifetime;
-
-  auto operator=(KeyCapture) = delete;
-  auto operator=(KeyCapture&) = delete;
-  auto operator=(KeyCapture&&) = delete;
-
   struct termios old_termios, current_termios;
+
+  int pending_scroll;
+
+  void read_escaped() {
+    switch(next().raw()) {
+      case UniCodePoint('O').raw(): {
+        auto direction_chr = next();
+        if (direction_chr == UniCodePoint('A'))
+          ++pending_scroll;
+        else if (direction_chr == UniCodePoint('B'))
+          --pending_scroll;
+        else
+          assert(0 && "unknown escape sequence");
+      } break;
+
+      default: {
+        assert(0 && "unknown escape sequence");
+      } break;
+    }
+  }
 };

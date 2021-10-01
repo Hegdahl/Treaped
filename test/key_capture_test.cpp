@@ -1,20 +1,17 @@
 #include <iostream>
 #include <vector>
+#include <unistd.h>
 
 #include "../src/key_capture.cpp"
 
 int main() {
   KeyCapture kc;
-
   std::vector<UniCodePoint> v;
+
   int n = 10;
-  for (int i = 0; i < n; ++i) {
-    std::cout << n-i << std::endl;
+  while ((int)v.size() < n) {
     v.push_back(kc.next());
-    if (v.back() == UniCodePoint::eof()) {
-      v.pop_back();
-      break;
-    }
+    std::cout << n-(int)v.size()+1 << std::endl;
   }
 
   for (auto x : v)

@@ -25,8 +25,6 @@ class Screen : Singleton<Screen> {
     std::cout << "\033[?1049h\033[2J";
     set_cursor(0, 0);
     std::cout << std::flush;
-
-    std::cerr << "abc\n";
   }
 
   ~Screen() {

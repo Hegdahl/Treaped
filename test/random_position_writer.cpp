@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <atomic>
 
 #include "../src/unicode.cpp"
 #include "../src/screen.cpp"
@@ -8,7 +9,6 @@
 int main() {
   Screen screen;
   KeyCapture kc;
-
   std::mt19937 rng(1337);
   std::cout << "press q to exit";
 
@@ -21,5 +21,4 @@ int main() {
     screen.set_cursor(y, x);
     std::cout << p << std::flush;
   }
-
 }

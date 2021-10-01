@@ -6,22 +6,23 @@
 
 class UniCodePoint {
  public:
-  UniCodePoint() : value(-2U) {}
-  UniCodePoint(char c) : UniCodePoint() {
-    assert(feed(c));
+  constexpr UniCodePoint() : value(-2U) {}
+  constexpr UniCodePoint(char c) : UniCodePoint() {
+    bool ok = feed(c);
+    assert(ok);
   }
 
-  static UniCodePoint eof() {
+  static constexpr UniCodePoint eof() {
     UniCodePoint p;
     p.value = -1U;
     return p;
   }
 
-  bool empty() const {
+  constexpr bool empty() const {
     return *this == UniCodePoint();
   }
 
-  bool feed(char c) {
+  constexpr bool feed(char c) {
     uint_least32_t x = (uint8_t)c;
 
     if (empty()) {
@@ -52,7 +53,7 @@ class UniCodePoint {
     return false;
   }
 
-  bool valid() const {
+  constexpr bool valid() const {
     if (*this == UniCodePoint::eof()) return true;
 
     int w = byte_type(value >> 3*8);
@@ -63,14 +64,16 @@ class UniCodePoint {
     return true;
   }
 
-  friend bool operator==(const UniCodePoint &lhs, const UniCodePoint &rhs) {
+  constexpr friend bool operator==(const UniCodePoint &lhs, const UniCodePoint &rhs) {
     return lhs.value == rhs.value;
   }
-  friend bool operator!=(const UniCodePoint &lhs, const UniCodePoint &rhs) {
+  constexpr friend bool operator!=(const UniCodePoint &lhs, const UniCodePoint &rhs) {
     return lhs.value != rhs.value;
   }
 
   friend std::ostream &operator<<(std::ostream &os, const UniCodePoint &p) {
+    if (p == UniCodePoint())
+      return os;
     assert(p.valid());
     assert(p != UniCodePoint::eof());
     int w = byte_type(p.value >> 3*8);
@@ -98,6 +101,10 @@ class UniCodePoint {
       }
     }
     return is;
+  }
+
+  constexpr uint_least32_t raw() const {
+    return value;
   }
 
  private:
