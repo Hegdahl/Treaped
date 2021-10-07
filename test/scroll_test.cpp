@@ -14,7 +14,7 @@ int main() {
   UniCodePoint p;
   while ((p = kc.next()) != UniCodePoint('q')) {
     if (!p.empty())
-      std::cout << std::bitset<32>(p.raw()) << std::flush;
+      std::cout << std::bitset<32>(p.raw()) << std::endl;
 
     int scroll = kc.get_scroll();
     if (scroll > 0)
